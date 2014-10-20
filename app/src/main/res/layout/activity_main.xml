@@ -17,4 +17,12 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="138dp" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Chat"
+        android:id="@+id/bt_chat"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+
 </RelativeLayout>

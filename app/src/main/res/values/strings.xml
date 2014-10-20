@@ -5,7 +5,6 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_settings">SettingsActivity</string>
-
     <string name="Text">Status: -</string>
     <string name="on">Turn On</string>
     <string name="off">Turn Off</string>
@@ -13,5 +12,6 @@
     <string name="Find">Search Devices / Cancel</string>
     <string name="Visible">Get Visible</string>
     <string name="Settings">Settings</string>
+    <string name="title_activity_chat">ChatActivity</string>
 
 </resources>

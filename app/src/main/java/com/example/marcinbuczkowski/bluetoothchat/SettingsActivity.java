@@ -183,12 +183,6 @@ public class SettingsActivity extends ActionBarActivity {
 
     }
 
-    @Override
-         protected void onDestroy() {
-        // TODO Auto-generated method stub
-        super.onDestroy();
-        unregisterReceiver(bReceiver);
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
