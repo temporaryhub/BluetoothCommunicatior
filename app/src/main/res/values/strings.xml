@@ -9,7 +9,7 @@
     <string name="on">Turn On</string>
     <string name="off">Turn Off</string>
     <string name="List">List paired Devices</string>
-    <string name="Find">Search Devices / Cancel</string>
+    <string name="Find">Search Devices</string>
     <string name="Visible">Get Visible</string>
     <string name="Settings">Settings</string>
     <string name="title_activity_chat">ChatActivity</string>

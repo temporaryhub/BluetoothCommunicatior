@@ -1,6 +1,7 @@
 package com.example.marcinbuczkowski.bluetoothchat;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -9,13 +10,28 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import java.util.UUID;
+
 
 public class MainActivity extends ActionBarActivity {
+
+    private BluetoothServerThread bluetoothServer;
+    private UUID serverId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        BluetoothAdapter bta = BluetoothAdapter.getDefaultAdapter();
+        if (bta == null) {
+            return;
+        }
+
+        //todo UUID generation based on device address and maybe other variables
+        this.serverId = UUID.fromString("38400000-8cf0-11bd-b23e-10b96e4ef00d");
+
+        this.bluetoothServer = new BluetoothServerThread(this.getBaseContext().getApplicationInfo().name, this.serverId);
 
         Button bt_settings = (Button) findViewById(R.id.bt_settings);
         Button bt_chat = (Button) findViewById(R.id.bt_chat);
@@ -32,16 +48,12 @@ public class MainActivity extends ActionBarActivity {
         bt_chat.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
-
                 Intent intent = new Intent(MainActivity.this, ChatActivity.class);
                 startActivity(intent);
             }
         });
 
     }
-
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

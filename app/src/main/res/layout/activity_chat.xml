@@ -9,4 +9,39 @@
     tools:context="com.example.marcinbuczkowski.bluetoothchat.ChatActivity">
 
 
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textMultiLine"
+        android:ems="10"
+        android:id="@+id/messageText"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@+id/sendButton"
+        android:maxLines="3" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Send"
+        android:id="@+id/sendButton"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true" />
+
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/messageView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_above="@+id/sendButton"
+        android:layout_below="@+id/receiversSpinner" />
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/receiversSpinner"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true" />
 </RelativeLayout>

@@ -131,9 +131,13 @@ public class SettingsActivity extends ActionBarActivity {
         // get paired devices
         pairedDevices = myBluetoothAdapter.getBondedDevices();
 
+        //clear adapter before listing
+        BTArrayAdapter.clear();
+
         // put it's one to the adapter
-        for(BluetoothDevice device : pairedDevices)
-            BTArrayAdapter.add(device.getName()+ "\n" + device.getAddress());
+        for(BluetoothDevice device : pairedDevices) {
+            BTArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+        }
 
         Toast.makeText(getApplicationContext(),"Show Paired Devices",
                 Toast.LENGTH_SHORT).show();
