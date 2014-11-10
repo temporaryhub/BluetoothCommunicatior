@@ -44,4 +44,5 @@
         android:id="@+id/receiversSpinner"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true" />
+
 </RelativeLayout>

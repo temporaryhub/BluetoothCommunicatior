@@ -8,6 +8,8 @@ import android.app.Activity;
 import android.bluetooth.*;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+
+import java.util.ArrayList;
 import java.util.Set;
 import java.util.UUID;
 
@@ -16,6 +18,7 @@ import android.content.IntentFilter;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -68,6 +71,32 @@ public class ChatActivity extends ActionBarActivity {
                 btc.sendMessage(message, receiver);
             }
         });
+
+        String person = this.receivers.getSelectedItem().toString();
+        if (person.length() > 0) {
+            addMessages(person);
+        }
+
+        //todo add reloading message list after choosing device from list
+    }
+
+    private void addMessages(String person) {
+        ScrollView sv = (ScrollView)findViewById(R.id.messageView);
+        sv.removeAllViews();
+
+        LinearLayout ll = new LinearLayout(this);
+        ll.setOrientation(LinearLayout.VERTICAL);
+
+        ChatMessageDatabase db = ChatMessageDatabase.getInstance(null);
+        ArrayList<String[]> messages = db.getMessages(person);
+
+        for (String[] messageInfo : messages) {
+            TextView tv = new TextView(this);
+            tv.setText(messageInfo[3]);
+            ll.addView(tv);;
+        }
+
+        sv.addView(ll);
     }
 
     private void populateReceivers() {
@@ -82,21 +111,6 @@ public class ChatActivity extends ActionBarActivity {
 
         this.btArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         this.receivers.setAdapter(this.btArrayAdapter);
-    }
-
-    //todo add to view only when appropriate device is chosen from selectbox
-    public boolean addMessage(String sender, String receiver, String message) {
-        ScrollView sv = (ScrollView)findViewById(R.id.messageView);
-
-        LinearLayout ll = new LinearLayout(this);
-        ll.setOrientation(LinearLayout.VERTICAL);
-
-        TextView tv = new TextView(this);
-        tv.setText(message);
-        ll.addView(tv);
-
-        sv.addView(ll);
-        return true;
     }
 
     @Override

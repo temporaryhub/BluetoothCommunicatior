@@ -2,9 +2,11 @@ package com.example.marcinbuczkowski.bluetoothchat;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,10 +30,16 @@ public class MainActivity extends ActionBarActivity {
             return;
         }
 
+        //instantiate the messages database before it's used
+        try {
+            ChatMessageDatabase.getInstance(this.getBaseContext().getFilesDir().getAbsolutePath());
+        } catch (Exception e) { }
+
         //todo UUID generation based on device address and maybe other variables
         this.serverId = UUID.fromString("38400000-8cf0-11bd-b23e-10b96e4ef00d");
 
-        this.bluetoothServer = new BluetoothServerThread(this.getBaseContext().getApplicationInfo().name, this.serverId);
+        this.bluetoothServer = new BluetoothServerThread("BluetoothChat", this.serverId);
+        new Thread(this.bluetoothServer).start();
 
         Button bt_settings = (Button) findViewById(R.id.bt_settings);
         Button bt_chat = (Button) findViewById(R.id.bt_chat);
