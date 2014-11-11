@@ -32,6 +32,7 @@ public class BluetoothClientThread {
         bta.cancelDiscovery();
 
         try {
+            //send message
             btSocket.connect();
             OutputStream os = btSocket.getOutputStream();
             byte[] byteMessage = this.messageToBuffer(message, receiver);
@@ -44,6 +45,9 @@ public class BluetoothClientThread {
             return;
         }
 
+        //write message to database if it was sent successfully
+        ChatMessageDatabase cmd = ChatMessageDatabase.getInstance(null);
+        cmd.save(BluetoothAdapter.getDefaultAdapter().getAddress(), receiver, message);
     }
 
     /**

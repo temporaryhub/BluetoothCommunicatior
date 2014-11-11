@@ -35,8 +35,8 @@
         android:id="@+id/messageView"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_above="@+id/sendButton"
-        android:layout_below="@+id/receiversSpinner" />
+        android:layout_below="@+id/receiversSpinner"
+        android:layout_above="@+id/messageText" />
 
     <Spinner
         android:layout_width="wrap_content"

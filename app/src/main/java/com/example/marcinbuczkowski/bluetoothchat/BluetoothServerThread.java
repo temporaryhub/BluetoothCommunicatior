@@ -21,7 +21,6 @@ public class BluetoothServerThread extends Thread {
     private BluetoothAdapter btAdapter;
 
     public BluetoothServerThread(String name, UUID id) {
-        Log.e("TAG", "Constructor");
         BluetoothServerSocket tmp = null;
         this.btAdapter = BluetoothAdapter.getDefaultAdapter();
 
@@ -39,18 +38,18 @@ public class BluetoothServerThread extends Thread {
         while (true) {
             try {
                 socket = this.btSocket.accept();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 break;
             }
 
             if (socket != null) {
                 this.manageReceivedMessage(socket);
-                try {
+                /*try {
                     this.btSocket.close();
                 } catch (IOException e) {
-                }
+                }*/
             }
-            break;
+            //break;
         }
     }
 

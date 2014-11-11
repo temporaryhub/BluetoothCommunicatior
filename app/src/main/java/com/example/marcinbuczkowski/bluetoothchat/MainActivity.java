@@ -1,8 +1,10 @@
 package com.example.marcinbuczkowski.bluetoothchat;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.ContextWrapper;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -27,10 +29,17 @@ public class MainActivity extends ActionBarActivity {
 
         BluetoothAdapter bta = BluetoothAdapter.getDefaultAdapter();
         if (bta == null) {
-            return;
+            this.closeOnError("Could not find a working bluetooth adapter. Make sure your device has bluetooth support.");
+        } else if (!bta.isEnabled()) {
+            Intent turnOnIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(turnOnIntent, 1);
         }
 
-        //instantiate the messages database before it's used
+        this.createAfterIntent();
+    }
+
+    private void createAfterIntent() {
+        //instantiate the messages database before it's used; later it won't be necessary to supply a path
         try {
             ChatMessageDatabase.getInstance(this.getBaseContext().getFilesDir().getAbsolutePath());
         } catch (Exception e) { }
@@ -52,7 +61,6 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
-
         bt_chat.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
@@ -60,7 +68,20 @@ public class MainActivity extends ActionBarActivity {
                 startActivity(intent);
             }
         });
+    }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        //checking if user enabled bluetooth
+        if (requestCode == 1) {
+            if (resultCode == RESULT_OK) {
+                //continue creating activity
+                this.createAfterIntent();
+            } else {
+                //show error and close
+                this.closeOnError("You need to enable bluetooth for this application to work.");
+            }
+        }
     }
 
     @Override
@@ -82,5 +103,17 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
+    private void closeOnError(String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Error")
+                .setMessage(message)
+                .setCancelable(false)
+                .setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        MainActivity.this.finish();
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
 }

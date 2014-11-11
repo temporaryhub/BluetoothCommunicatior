@@ -2,6 +2,7 @@ package com.example.marcinbuczkowski.bluetoothchat;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.app.Activity;
@@ -93,7 +94,13 @@ public class ChatActivity extends ActionBarActivity {
         for (String[] messageInfo : messages) {
             TextView tv = new TextView(this);
             tv.setText(messageInfo[3]);
-            ll.addView(tv);;
+            //if we are the sender - align text to the right
+            if (messageInfo[1].equals(BluetoothAdapter.getDefaultAdapter().getAddress())) {
+                tv.setGravity(Gravity.RIGHT);
+            } else { //if we are the receiver - align text to the left
+                tv.setGravity(Gravity.LEFT);
+            }
+            ll.addView(tv);
         }
 
         sv.addView(ll);
