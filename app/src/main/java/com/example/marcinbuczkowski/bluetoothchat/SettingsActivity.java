@@ -1,5 +1,8 @@
 package com.example.marcinbuczkowski.bluetoothchat;
 
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -11,6 +14,8 @@ import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import java.util.Set;
+import java.util.UUID;
+
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.view.View;
@@ -18,6 +23,7 @@ import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,14 +32,23 @@ public class SettingsActivity extends ActionBarActivity {
 
     private static final int REQUEST_ENABLE_BT = 1;
     private Button onBtn;
-    private Button offBtn;
+    private Button locBtn;
     private Button listBtn;
     private Button findBtn;
+    private Button gpsBtn;
     private TextView text;
     private BluetoothAdapter myBluetoothAdapter;
     private Set<BluetoothDevice> pairedDevices;
     private ListView myListView;
     private ArrayAdapter<String> BTArrayAdapter;
+    private Spinner receivers;
+    private LocationManager myLocationManager;
+    private String PROVIDER = LocationManager.GPS_PROVIDER;
+    private Location location;
+    public static Location device1;
+    private Double lon;
+    private Double lat;
+    public static String loc = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +59,7 @@ public class SettingsActivity extends ActionBarActivity {
         myBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if(myBluetoothAdapter == null) {
             onBtn.setEnabled(false);
-            offBtn.setEnabled(false);
+            locBtn.setEnabled(false);
             listBtn.setEnabled(false);
             findBtn.setEnabled(false);
             text.setText("Status: not supported");
@@ -63,13 +78,13 @@ public class SettingsActivity extends ActionBarActivity {
                 }
             });
 
-            offBtn = (Button)findViewById(R.id.turnOff);
-            offBtn.setOnClickListener(new OnClickListener() {
+            locBtn = (Button)findViewById(R.id.distance);
+            locBtn.setOnClickListener(new OnClickListener() {
 
                 @Override
                 public void onClick(View v) {
                     // TODO Auto-generated method stub
-                    off(v);
+                    gps(v);
                 }
             });
 
@@ -93,12 +108,81 @@ public class SettingsActivity extends ActionBarActivity {
                 }
             });
 
-            myListView = (ListView)findViewById(R.id.listView1);
+            gpsBtn = (Button)findViewById(R.id.gps);
+            gpsBtn.setOnClickListener(new OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    // TODO Auto-generated method stub
+                    loc(v);
+                }
+            });
+
+            //myListView = (ListView)findViewById(R.id.listView1);
+            this.receivers = (Spinner)findViewById(R.id.receiversSpinner);
+            this.populateReceivers();
+            myLocationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+            this.location = myLocationManager.getLastKnownLocation(PROVIDER);
+
+            myLocationManager.requestLocationUpdates(
+                    PROVIDER,     //provider
+                    0,       //minTime
+                    0,       //minDistance
+                    myLocationListener); //LocationListener
+            //showPosition(location);
 
             // create the arrayAdapter that contains the BTDevices, and set it to the ListView
-            BTArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
-            myListView.setAdapter(BTArrayAdapter);
+            this.BTArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
+            this.receivers.setAdapter(this.BTArrayAdapter);
+            //BTArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
+            //myListView.setAdapter(BTArrayAdapter);
         }
+    }
+
+    private void showPosition(Location location)
+    {
+        SettingsActivity.device1=location;
+    }
+
+    private LocationListener myLocationListener
+            = new LocationListener(){
+
+        @Override
+        public void onLocationChanged(Location location) {
+            showPosition(location);
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+            // TODO Auto-generated method stub
+
+        }};
+
+
+    private void populateReceivers() {
+        this.BTArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
+        Set<BluetoothDevice> pairedDevices = this.myBluetoothAdapter.getBondedDevices();
+        if (pairedDevices.size() > 0) {
+            for (BluetoothDevice device : pairedDevices) {
+                //todo add address as ID and name as item content
+                this.BTArrayAdapter.add(device.getAddress());
+            }
+        }
+
+        this.BTArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        this.receivers.setAdapter(this.BTArrayAdapter);
     }
 
     public void on(View view){
@@ -110,8 +194,10 @@ public class SettingsActivity extends ActionBarActivity {
                     Toast.LENGTH_LONG).show();
         }
         else{
-            Toast.makeText(getApplicationContext(),"Bluetooth is already on",
-                    Toast.LENGTH_LONG).show();
+            myBluetoothAdapter.disable();
+            text.setText("Status: Disconnected");
+            /*Toast.makeText(getApplicationContext(),"Bluetooth is already on",
+                    Toast.LENGTH_LONG).show();*/
         }
     }
 
@@ -128,20 +214,33 @@ public class SettingsActivity extends ActionBarActivity {
     }
 
     public void list(View view){
-        // get paired devices
-        pairedDevices = myBluetoothAdapter.getBondedDevices();
-
-        //clear adapter before listing
-        BTArrayAdapter.clear();
-
-        // put it's one to the adapter
-        for(BluetoothDevice device : pairedDevices) {
-            BTArrayAdapter.add(device.getName() + "\n" + device.getAddress());
-        }
-
+        populateReceivers();
         Toast.makeText(getApplicationContext(),"Show Paired Devices",
                 Toast.LENGTH_SHORT).show();
 
+    }
+
+    public void loc(View view)
+    {
+        String person = receivers.getSelectedItem().toString();
+        String [] lines = person.split("\n");
+        if(SettingsActivity.device1 == null)
+        {
+            Toast.makeText(getApplicationContext(),"Location not found",
+                    Toast.LENGTH_SHORT).show();
+        }
+        else
+        {
+            String message = "NULL";
+            //String message = String.valueOf(this.device1.getLongitude()) + "\n" + String.valueOf(this.device1.getLatitude());
+            BluetoothClientThread btc = new BluetoothClientThread();
+            BluetoothDevice bd = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(lines[0]);
+            //todo replace UUID as described in MainActivity
+            btc.connect(bd, UUID.fromString("38400000-8cf0-11bd-b23e-10b96e4ef00d"));
+            btc.sendInfo(message, lines[0]);
+            /*Toast.makeText(getApplicationContext(),message,
+                    Toast.LENGTH_SHORT).show();*/
+        }
     }
 
     final BroadcastReceiver bReceiver = new BroadcastReceiver() {
@@ -171,12 +270,44 @@ public class SettingsActivity extends ActionBarActivity {
         }
     }
 
-    public void off(View view){
-        myBluetoothAdapter.disable();
-        text.setText("Status: Disconnected");
+    private Double getDistance() {
+        final int RADIUS_EARTH = 6371;
+        double latitude1 = SettingsActivity.device1.getLatitude();
+        double latitude2 = this.lat;
+        double longitude1 = SettingsActivity.device1.getLongitude();
+        double longitude2 = this.lon;
 
-        Toast.makeText(getApplicationContext(),"Bluetooth turned off",
-                Toast.LENGTH_LONG).show();
+        double dLat = getRad(latitude2 - latitude1);
+        double dLong = getRad(longitude2 - longitude1);
+
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(getRad(latitude1)) * Math.cos(getRad(latitude2)) * Math.sin(dLong / 2) * Math.sin(dLong / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        double x = (RADIUS_EARTH * c) *1000;
+        double dis = x;
+        //dis *=100;
+        dis = Math.round(dis);
+        //dis /=100;
+        return dis;
+    }
+
+    private Double getRad(Double x) {
+        return x * Math.PI / 180;
+    }
+
+    //Do pokazywania odległości
+    public void gps(View view){
+        if(SettingsActivity.loc != null) {
+            String[] temp = SettingsActivity.loc.split("\n");
+            this.lon = Double.parseDouble(temp[0]);
+            this.lat = Double.parseDouble(temp[1]);
+            double dis = this.getDistance();
+            Toast.makeText(getApplicationContext(), "Distance: " + dis,
+                    Toast.LENGTH_SHORT).show();
+        }
+        else{
+            Toast.makeText(getApplicationContext(), "First find your gps position",
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
 

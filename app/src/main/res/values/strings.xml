@@ -6,11 +6,12 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_settings">SettingsActivity</string>
     <string name="Text">Status: -</string>
-    <string name="on">Turn On</string>
-    <string name="off">Turn Off</string>
+    <string name="on">On/Off</string>
+    <string name="off">Dis</string>
     <string name="List">List paired Devices</string>
     <string name="Find">Search Devices</string>
-    <string name="Visible">Get Visible</string>
+    <string name="Visible">Visible</string>
+    <string name="GPS">Gps</string>
     <string name="Settings">Settings</string>
     <string name="title_activity_chat">ChatActivity</string>
 

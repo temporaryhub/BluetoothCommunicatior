@@ -20,9 +20,13 @@ public class BluetoothServerThread extends Thread {
     private BluetoothServerSocket btSocket;
     private BluetoothAdapter btAdapter;
 
-    public BluetoothServerThread(String name, UUID id) {
+    private Object services;
+
+
+    public BluetoothServerThread(String name, UUID id,Object services) {
         BluetoothServerSocket tmp = null;
         this.btAdapter = BluetoothAdapter.getDefaultAdapter();
+        this.services=services;
 
         try {
             tmp = this.btAdapter.listenUsingRfcommWithServiceRecord(name, id);
@@ -96,8 +100,43 @@ public class BluetoothServerThread extends Thread {
         }
 
         if (parsedMessage[2].equals("chat")) {
+
             this.saveChatMessage(parsedMessage[0], parsedMessage[1], parsedMessage[3]);
-        } // here you can add other methods to process different message types
+        }
+        else if(parsedMessage[2].equals("pos"))
+        {
+            this.saveDistance(parsedMessage[3]);
+        }
+        else if(parsedMessage[2].equals("inf"))
+        {
+            this.savePosition(parsedMessage[0],parsedMessage[3]);
+        }
+    }
+
+    private void saveDistance(String dis)
+    {
+        try{
+            SettingsActivity.loc=dis;
+        }
+        catch (Exception e){}
+    }
+
+    private void savePosition(String sender, String position)
+    {
+        //Najpierw sprawdzić czy device 1 nie jest puste
+        try{
+            if(SettingsActivity.device1 != null) {
+                String message = String.valueOf(SettingsActivity.device1.getLongitude()) + "\n" + String.valueOf(SettingsActivity.device1.getLatitude());
+                BluetoothClientThread btc = new BluetoothClientThread();
+                BluetoothDevice bd = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(sender);
+                //todo replace UUID as described in MainActivity
+                btc.connect(bd, UUID.fromString("38400000-8cf0-11bd-b23e-10b96e4ef00d"));
+                btc.sendPosition(message,sender);
+                //SettingsActivity.loc = position;
+            }
+
+        }
+        catch (Exception e){}
     }
 
     private void saveChatMessage(String sender, String receiver, String message) {

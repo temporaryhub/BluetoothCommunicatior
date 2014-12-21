@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="@string/Text"
-        android:layout_span="3"
+        android:layout_span="4"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true" />
 
@@ -29,7 +29,7 @@
         android:layout_alignParentLeft="true" />
 
     <Button
-        android:id="@+id/turnOff"
+        android:id="@+id/distance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/off"
@@ -44,8 +44,17 @@
         android:onClick="visible"
         android:text="@string/Visible"
         android:layout_column="3"
-        android:layout_alignTop="@+id/turnOff"
-        android:layout_toRightOf="@+id/turnOff" />
+        android:layout_alignTop="@+id/distance"
+        android:layout_toRightOf="@+id/distance" />
+
+    <Button
+        android:id="@+id/gps"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/GPS"
+        android:layout_column="4"
+        android:layout_alignTop="@+id/button2"
+        android:layout_toRightOf="@+id/button2" />
 
     <Button
         android:id="@+id/paired"
@@ -66,15 +75,11 @@
         android:layout_column="2"
         android:layout_alignTop="@+id/paired"
         android:layout_toRightOf="@+id/paired" />
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/receiversSpinner"
+        android:layout_below="@id/paired"/>
 
-    <ListView
-    android:id="@+id/listView1"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-        android:layout_column="14"
-        android:layout_below="@+id/paired"
-        android:layout_alignParentLeft="true">
-
-</ListView>
 
 </RelativeLayout>

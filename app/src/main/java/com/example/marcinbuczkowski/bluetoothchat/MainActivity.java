@@ -3,6 +3,7 @@ package com.example.marcinbuczkowski.bluetoothchat;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
+import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -47,8 +48,10 @@ public class MainActivity extends ActionBarActivity {
         //todo UUID generation based on device address and maybe other variables
         this.serverId = UUID.fromString("38400000-8cf0-11bd-b23e-10b96e4ef00d");
 
-        this.bluetoothServer = new BluetoothServerThread("BluetoothChat", this.serverId);
+        this.bluetoothServer = new BluetoothServerThread("BluetoothChat", this.serverId,getSystemService(Context.LOCATION_SERVICE));
         new Thread(this.bluetoothServer).start();
+
+
 
         Button bt_settings = (Button) findViewById(R.id.bt_settings);
         Button bt_chat = (Button) findViewById(R.id.bt_chat);
