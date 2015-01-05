@@ -29,12 +29,15 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.Spinner;
+import android.os.Handler;
 
 public class ChatActivity extends ActionBarActivity {
 
     private Spinner receivers;
     private BluetoothAdapter bt;
     private ArrayAdapter<String> btArrayAdapter;
+    Handler handler = new Handler();
+    int odsWiadomosci = 20000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +50,10 @@ public class ChatActivity extends ActionBarActivity {
 
         this.receivers = (Spinner)findViewById(R.id.receiversSpinner);
         this.populateReceivers();
+
+      //  final Intent refresh = new Intent(this, ChatActivity.class);
+
+
 
         Button sendButton = (Button)findViewById(R.id.sendButton);
 
@@ -70,18 +77,42 @@ public class ChatActivity extends ActionBarActivity {
                 //todo replace UUID as described in MainActivity
                 btc.connect(bd, UUID.fromString("38400000-8cf0-11bd-b23e-10b96e4ef00d"));
                 btc.sendMessage(message, receiver);
+                reload();
             }
         });
 
         String person = this.receivers.getSelectedItem().toString();
+
         if (person.length() > 0) {
             addMessages(person);
+
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+
+                    reload();
+                }
+            }, odsWiadomosci);
         }
+
 
         //todo add reloading message list after choosing device from list
     }
+    public void reload() {
+
+        Intent intent = new Intent(this, ChatActivity.class);
+        overridePendingTransition(0, 0);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        finish();
+
+        overridePendingTransition(0, 0);
+        startActivity(intent);
+
+    }
+
 
     private void addMessages(String person) {
+
         ScrollView sv = (ScrollView)findViewById(R.id.messageView);
         sv.removeAllViews();
 
@@ -91,19 +122,26 @@ public class ChatActivity extends ActionBarActivity {
         ChatMessageDatabase db = ChatMessageDatabase.getInstance(null);
         ArrayList<String[]> messages = db.getMessages(person);
 
+
+
         for (String[] messageInfo : messages) {
             TextView tv = new TextView(this);
             tv.setText(messageInfo[3]);
             //if we are the sender - align text to the right
             if (messageInfo[1].equals(BluetoothAdapter.getDefaultAdapter().getAddress())) {
                 tv.setGravity(Gravity.RIGHT);
+
+
             } else { //if we are the receiver - align text to the left
                 tv.setGravity(Gravity.LEFT);
+
             }
             ll.addView(tv);
+
         }
 
         sv.addView(ll);
+
     }
 
     private void populateReceivers() {
