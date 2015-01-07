@@ -86,13 +86,13 @@ public class ChatActivity extends ActionBarActivity {
         if (person.length() > 0) {
             addMessages(person);
 
-            handler.postDelayed(new Runnable() {
+            /*handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
 
                     reload();
                 }
-            }, odsWiadomosci);
+            }, odsWiadomosci);*/
         }
 
 

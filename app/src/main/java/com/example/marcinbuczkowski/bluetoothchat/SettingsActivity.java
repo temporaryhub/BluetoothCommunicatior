@@ -226,7 +226,7 @@ public class SettingsActivity extends ActionBarActivity {
         String [] lines = person.split("\n");
         if(SettingsActivity.device1 == null)
         {
-            Toast.makeText(getApplicationContext(),"Location not found",
+            Toast.makeText(getApplicationContext(),"Location is required",
                     Toast.LENGTH_SHORT).show();
         }
         else
@@ -250,8 +250,10 @@ public class SettingsActivity extends ActionBarActivity {
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 // Get the BluetoothDevice object from the Intent
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                short rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI,Short.MIN_VALUE);
                 // add the name and the MAC address of the object to the arrayAdapter
-                BTArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+                //BTArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+                BTArrayAdapter.add(device.getName() + rssi + " db");
                 BTArrayAdapter.notifyDataSetChanged();
             }
         }
@@ -301,11 +303,11 @@ public class SettingsActivity extends ActionBarActivity {
             this.lon = Double.parseDouble(temp[0]);
             this.lat = Double.parseDouble(temp[1]);
             double dis = this.getDistance();
-            Toast.makeText(getApplicationContext(), "Distance: " + dis,
+            Toast.makeText(getApplicationContext(), "Distance between "+ receivers.getSelectedItem().toString() + " is " + dis + "meters",
                     Toast.LENGTH_SHORT).show();
         }
         else{
-            Toast.makeText(getApplicationContext(), "First find your gps position",
+            Toast.makeText(getApplicationContext(), "Position of second device is not available",
                     Toast.LENGTH_SHORT).show();
         }
     }
