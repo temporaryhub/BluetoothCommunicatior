@@ -87,16 +87,11 @@ public class SettingsActivity extends ActionBarActivity {
                 }
             });
 
-            //myListView = (ListView)findViewById(R.id.listView1);
             this.receivers = (Spinner)findViewById(R.id.receiversSpinner);
             this.populateReceivers();
 
-
-            // create the arrayAdapter that contains the BTDevices, and set it to the ListView
             this.BTArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
             this.receivers.setAdapter(this.BTArrayAdapter);
-            //BTArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
-            //myListView.setAdapter(BTArrayAdapter);
         }
     }
 
@@ -105,7 +100,6 @@ public class SettingsActivity extends ActionBarActivity {
         Set<BluetoothDevice> pairedDevices = this.myBluetoothAdapter.getBondedDevices();
         if (pairedDevices.size() > 0) {
             for (BluetoothDevice device : pairedDevices) {
-                //todo add address as ID and name as item content
                 this.BTArrayAdapter.add(device.getAddress());
             }
         }
@@ -125,8 +119,6 @@ public class SettingsActivity extends ActionBarActivity {
         else{
             myBluetoothAdapter.disable();
             text.setText("Status: Disconnected");
-            /*Toast.makeText(getApplicationContext(),"Bluetooth is already on",
-                    Toast.LENGTH_LONG).show();*/
         }
     }
 
@@ -168,16 +160,6 @@ public class SettingsActivity extends ActionBarActivity {
     public double getDistance(short rssi)
     {
         double txPower = 4;
-        /*int r = (int) rssi;
-        int[][] distance = { {-58,1},{-60,2},{-66,3},{-68,4},{-69,5},{-73,8},{-75,10},{-80,12},{-85,15},{-90,20},{-95,25}};
-        for(int i=0;i<11;i++)
-        {
-            if(r>=distance[i][0])
-            {
-                return distance[i][1];
-            }
-        }
-        return 0;*/
         double distance = (Math.pow(10, ((double) txPower - rssi) / (10 * 2))/1000);
         distance *=100;
         distance = Math.round(distance);

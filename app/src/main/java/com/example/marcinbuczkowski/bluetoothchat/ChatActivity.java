@@ -37,7 +37,6 @@ public class ChatActivity extends ActionBarActivity {
     private BluetoothAdapter bt;
     private ArrayAdapter<String> btArrayAdapter;
     Handler handler = new Handler();
-    int odsWiadomosci = 20000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,10 +49,6 @@ public class ChatActivity extends ActionBarActivity {
 
         this.receivers = (Spinner)findViewById(R.id.receiversSpinner);
         this.populateReceivers();
-
-      //  final Intent refresh = new Intent(this, ChatActivity.class);
-
-
 
         Button sendButton = (Button)findViewById(R.id.sendButton);
 
@@ -74,7 +69,6 @@ public class ChatActivity extends ActionBarActivity {
 
                 BluetoothClientThread btc = new BluetoothClientThread();
                 BluetoothDevice bd = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(receiver);
-                //todo replace UUID as described in MainActivity
                 btc.connect(bd, UUID.fromString("38400000-8cf0-11bd-b23e-10b96e4ef00d"));
                 btc.sendMessage(message, receiver);
                 reload();
@@ -85,18 +79,8 @@ public class ChatActivity extends ActionBarActivity {
 
         if (person.length() > 0) {
             addMessages(person);
-
-            /*handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-
-                    reload();
-                }
-            }, odsWiadomosci);*/
         }
 
-
-        //todo add reloading message list after choosing device from list
     }
     public void reload() {
 
@@ -122,26 +106,19 @@ public class ChatActivity extends ActionBarActivity {
         ChatMessageDatabase db = ChatMessageDatabase.getInstance(null);
         ArrayList<String[]> messages = db.getMessages(person);
 
-
-
         for (String[] messageInfo : messages) {
             TextView tv = new TextView(this);
             tv.setText(messageInfo[3]);
             //if we are the sender - align text to the right
             if (messageInfo[1].equals(BluetoothAdapter.getDefaultAdapter().getAddress())) {
                 tv.setGravity(Gravity.RIGHT);
-
-
             } else { //if we are the receiver - align text to the left
                 tv.setGravity(Gravity.LEFT);
-
             }
             ll.addView(tv);
-
         }
 
         sv.addView(ll);
-
     }
 
     private void populateReceivers() {
@@ -149,7 +126,6 @@ public class ChatActivity extends ActionBarActivity {
         Set<BluetoothDevice> pairedDevices = this.bt.getBondedDevices();
         if (pairedDevices.size() > 0) {
             for (BluetoothDevice device : pairedDevices) {
-                //todo add address as ID and name as item content
                 this.btArrayAdapter.add(device.getAddress());
             }
         }

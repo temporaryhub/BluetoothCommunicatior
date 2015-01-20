@@ -48,12 +48,7 @@ public class BluetoothServerThread extends Thread {
 
             if (socket != null) {
                 this.manageReceivedMessage(socket);
-                /*try {
-                    this.btSocket.close();
-                } catch (IOException e) {
-                }*/
             }
-            //break;
         }
     }
 

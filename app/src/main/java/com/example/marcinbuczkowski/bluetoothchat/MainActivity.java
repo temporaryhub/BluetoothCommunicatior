@@ -45,7 +45,6 @@ public class MainActivity extends ActionBarActivity {
             ChatMessageDatabase.getInstance(this.getBaseContext().getFilesDir().getAbsolutePath());
         } catch (Exception e) { }
 
-        //todo UUID generation based on device address and maybe other variables
         this.serverId = UUID.fromString("38400000-8cf0-11bd-b23e-10b96e4ef00d");
 
         this.bluetoothServer = new BluetoothServerThread("BluetoothChat", this.serverId,getSystemService(Context.LOCATION_SERVICE));
