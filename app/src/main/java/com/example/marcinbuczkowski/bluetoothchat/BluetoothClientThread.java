@@ -50,44 +50,6 @@ public class BluetoothClientThread {
         cmd.save(BluetoothAdapter.getDefaultAdapter().getAddress(), receiver, message);
     }
 
-    public void sendPosition(String message, String receiver) {
-        BluetoothAdapter bta = BluetoothAdapter.getDefaultAdapter();
-        bta.cancelDiscovery();
-
-        try {
-            //send message
-            btSocket.connect();
-            OutputStream os = btSocket.getOutputStream();
-            byte[] byteMessage = this.positionToBuffer(message, receiver);
-            os.write(byteMessage);
-            btSocket.close();
-        } catch (IOException connectException) {
-            try {
-                btSocket.close();
-            } catch (IOException closeException) { }
-            return;
-        }
-    }
-
-    public void sendInfo(String message, String receiver) {
-        BluetoothAdapter bta = BluetoothAdapter.getDefaultAdapter();
-        bta.cancelDiscovery();
-
-        try {
-            //send message
-            btSocket.connect();
-            OutputStream os = btSocket.getOutputStream();
-            byte[] byteMessage = this.infoToBuffer(message, receiver);
-            os.write(byteMessage);
-            btSocket.close();
-        } catch (IOException connectException) {
-            try {
-                btSocket.close();
-            } catch (IOException closeException) { }
-            return;
-        }
-    }
-
     /**
      * Message format as described in BluetoothServerThread
      */
@@ -96,26 +58,6 @@ public class BluetoothClientThread {
         message += "SENDER: " + BluetoothAdapter.getDefaultAdapter().getAddress() + System.getProperty("line.separator");
         message += "RECEIVER: " + receiver + System.getProperty("line.separator");
         message += "TYPE: chat" + System.getProperty("line.separator");
-        message += content + System.getProperty("line.separator");
-
-        return message.getBytes(Charset.forName("UTF-8"));
-    }
-
-    private byte[] positionToBuffer(String content, String receiver) {
-        String message = "";
-        message += "SENDER: " + BluetoothAdapter.getDefaultAdapter().getAddress() + System.getProperty("line.separator");
-        message += "RECEIVER: " + receiver + System.getProperty("line.separator");
-        message += "TYPE: pos" + System.getProperty("line.separator");
-        message += content + System.getProperty("line.separator");
-
-        return message.getBytes(Charset.forName("UTF-8"));
-    }
-
-    private byte[] infoToBuffer(String content, String receiver) {
-        String message = "";
-        message += "SENDER: " + BluetoothAdapter.getDefaultAdapter().getAddress() + System.getProperty("line.separator");
-        message += "RECEIVER: " + receiver + System.getProperty("line.separator");
-        message += "TYPE: inf" + System.getProperty("line.separator");
         message += content + System.getProperty("line.separator");
 
         return message.getBytes(Charset.forName("UTF-8"));
